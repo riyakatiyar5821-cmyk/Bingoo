@@ -1,23 +1,37 @@
-#!/bin/bash
-#this Script belong to Cloudaseem Youtube channel #####
+# Update packages
+sudo apt update
 
-# 1. jenkins installation on ubuntu 
-sudo apt update -y
-sleep 5
-sudo apt install fontconfig openjdk-17-jre -y
-sleep 15
-sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
-  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
-  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-  /etc/apt/sources.list.d/jenkins.list > /dev/null
-sudo apt-get update -y
-sleep 5
-sudo apt-get install jenkins -y 
-sleep 10
+# Install Java 21
+sudo apt install -y fontconfig openjdk-21-jre
+
+# Verify Java installation
+java -version
+
+# Create keyrings directory
+sudo mkdir -p /etc/apt/keyrings
+
+# Download latest Jenkins repository signing key
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key | \
+sudo tee /etc/apt/keyrings/jenkins-keyring.asc >/dev/null
+
+# Add Jenkins repository
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | \
+sudo tee /etc/apt/sources.list.d/jenkins.list >/dev/null
+
+# Refresh package list
+sudo apt update
+
+# Install Jenkins
+sudo apt install -y jenkins
+
+# Enable Jenkins service
 sudo systemctl enable jenkins
+
+# Start Jenkins service
 sudo systemctl start jenkins
-sleep 10
+
+# Check Jenkins status
+sudo systemctl status jenkins
 
 # 2. Install Docker &  SONARQUBE  AS A CONTAINER IN THE EC2 INSTANCE
 sudo apt-get update -y
